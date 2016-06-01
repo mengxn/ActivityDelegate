@@ -1,5 +1,5 @@
 # Activity跳转封装
-对于Activity之间的跳转进行封装统一，便于之后的管理与维护。
+对于Activity之间的跳转进行封装统一，便于之后的管理与维护。  
 例：打开一个Activity
 ```java
 ActivityDelegate.create(SomeActivity.class).open(context);
