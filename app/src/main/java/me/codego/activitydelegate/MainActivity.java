@@ -22,6 +22,10 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putString("key", "hello world from last view");
         ActivityDelegate.create(SecondActivity.class, bundle).open(this);
+
+        ActivityDelegate.create(SecondActivity.class)
+                .putString("key", "some value")
+                .open(this);
     }
 
     public void openSecondWithAnimation(View view) {

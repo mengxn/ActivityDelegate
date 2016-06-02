@@ -43,25 +43,28 @@ public class ActivityDelegate {
         return new ActivityDelegate(cls, bundle);
     }
 
-    public void putString(String key, String value) {
+    public ActivityDelegate putString(String key, String value) {
         if (bundle == null) {
             bundle = new Bundle();
         }
         bundle.putString(key, value);
+        return this;
     }
 
-    public void putInt(String key, int value) {
+    public ActivityDelegate putInt(String key, int value) {
         if (bundle == null) {
             bundle = new Bundle();
         }
         bundle.putInt(key, value);
+        return this;
     }
 
-    public void putAll(String key, Bundle bundle) {
+    public ActivityDelegate putAll(String key, Bundle bundle) {
         if (this.bundle == null) {
             this.bundle = new Bundle();
         }
         this.bundle.putAll(bundle);
+        return this;
     }
 
     public ActivityDelegate transition(int enterAnim, int exitAnim) {
