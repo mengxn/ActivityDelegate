@@ -43,6 +43,27 @@ public class ActivityDelegate {
         return new ActivityDelegate(cls, bundle);
     }
 
+    public void putString(String key, String value) {
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putString(key, value);
+    }
+
+    public void putInt(String key, int value) {
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putInt(key, value);
+    }
+
+    public void putAll(String key, Bundle bundle) {
+        if (this.bundle == null) {
+            this.bundle = new Bundle();
+        }
+        this.bundle.putAll(bundle);
+    }
+
     public ActivityDelegate transition(int enterAnim, int exitAnim) {
         this.enterAnim = enterAnim;
         this.exitAnim = exitAnim;
@@ -51,7 +72,7 @@ public class ActivityDelegate {
 
     public void open(Context context) {
         Intent intent = new Intent(context, cls);
-        if (bundle != null) {
+        if (bundle != null && !bundle.isEmpty()) {
             intent.putExtras(bundle);
         }
         context.startActivity(intent);
