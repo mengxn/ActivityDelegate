@@ -10,11 +10,17 @@ Bundle bundle = new Bundle();
 bundle.putString("key", "hello world from last view");
 ActivityDelegate.create(SecondActivity.class, bundle).open(this);
 ```
+或者
+```java
+ActivityDelegate.create(SecondActivity.class)
+        .putString("key", "some value")
+        .open(this);
+```
 例：打开一个有动画切换效果的Activity
 ```java
 ActivityDelegate.create(SecondActivity.class)
-                .transition(R.anim.slide_in_right, R.anim.slide_out_left)
-                .open(this);
+        .transition(R.anim.slide_in_right, R.anim.slide_out_left)
+        .open(this);
 ```
 例：结束一个Activity
 ```java
