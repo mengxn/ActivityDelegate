@@ -59,6 +59,14 @@ public class ActivityDelegate {
         return this;
     }
 
+    public ActivityDelegate putBoolean(String key, boolean value) {
+        if (bundle == null) {
+            bundle = new Bundle();
+        }
+        bundle.putBoolean(key, value);
+        return this;
+    }
+
     public ActivityDelegate putAll(String key, Bundle bundle) {
         if (this.bundle == null) {
             this.bundle = new Bundle();
