@@ -15,8 +15,8 @@ public class ActivityDelegate {
     private Class cls;
     private Bundle bundle;
 
-    private int enterAnim = android.R.anim.fade_in;
-    private int exitAnim = android.R.anim.fade_out;
+    private int enterAnim;
+    private int exitAnim;
 
     public ActivityDelegate(Context context) {
         this.context = context;
@@ -55,7 +55,7 @@ public class ActivityDelegate {
             intent.putExtras(bundle);
         }
         context.startActivity(intent);
-        if (context instanceof Activity) {
+        if (context instanceof Activity && enterAnim > 0 && exitAnim > 0) {
             ((Activity) context).overridePendingTransition(enterAnim, exitAnim);
         }
     }
@@ -64,7 +64,9 @@ public class ActivityDelegate {
         if (context != null && context instanceof Activity) {
             Activity activity = (Activity) this.context;
             activity.finish();
-            activity.overridePendingTransition(enterAnim, exitAnim);
+            if (enterAnim > 0 && exitAnim > 0) {
+                activity.overridePendingTransition(enterAnim, exitAnim);
+            }
         }
     }
 
