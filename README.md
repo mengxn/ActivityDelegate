@@ -21,3 +21,9 @@ ActivityDelegate.create(SecondActivity.class)
 ```java
 ActivityDelegate.create(this).close();
 ```
+例：结束一个有动画切换效果的Activity
+```java
+ActivityDelegate.create(this)
+        .transition(R.anim.slide_in_left, R.anim.slide_out_right)
+        .close();
+```
