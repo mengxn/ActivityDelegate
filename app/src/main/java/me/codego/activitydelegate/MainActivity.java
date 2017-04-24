@@ -4,7 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import me.codego.library.delegate.ActivityDelegate;
+import me.codego.utils.ActivityDelegate;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,18 +16,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openSecond(View view) {
-        ActivityDelegate.create(SecondActivity.class).open(this);
+        ActivityDelegate.from(this)
+                .to(SecondActivity.class);
     }
 
     public void openSecondWithExtra(View view) {
         Bundle bundle = new Bundle();
         bundle.putString("key", "hello world from last view");
-        ActivityDelegate.create(SecondActivity.class, bundle).open(this);
+        ActivityDelegate.from(this)
+                .with(bundle)
+                .to(SecondActivity.class);
     }
 
     public void openSecondWithAnimation(View view) {
-        ActivityDelegate.create(SecondActivity.class)
+        ActivityDelegate.from(this)
                 .transition(R.anim.slide_in_right, R.anim.slide_out_left)
-                .open(this);
+                .to(SecondActivity.class);
     }
 }
