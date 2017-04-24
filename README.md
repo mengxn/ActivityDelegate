@@ -3,27 +3,24 @@
 
 例：打开一个Activity
 ```java
-ActivityDelegate.create(SomeActivity.class).open(context);
+ActivityDelegate.from(this)
+                .to(SecondActivity.class);
 ```
 例：打开一个附带参数的Activity
 ```java
 Bundle bundle = new Bundle();
 bundle.putString("key", "hello world from last view");
-ActivityDelegate.create(SecondActivity.class, bundle).open(this);
+ActivityDelegate.from(this)
+                .with(bundle)
+                .to(SecondActivity.class);
 ```
 例：打开一个有动画切换效果的Activity
 ```java
-ActivityDelegate.create(SecondActivity.class)
+ActivityDelegate.from(this)
                 .transition(R.anim.slide_in_right, R.anim.slide_out_left)
-                .open(this);
+                .to(SecondActivity.class);
 ```
 例：结束一个Activity
 ```java
-ActivityDelegate.create(this).close();
-```
-例：结束一个有动画切换效果的Activity
-```java
-ActivityDelegate.create(this)
-        .transition(R.anim.slide_in_left, R.anim.slide_out_right)
-        .close();
+ActivityDelegate.from(this).finish();
 ```
