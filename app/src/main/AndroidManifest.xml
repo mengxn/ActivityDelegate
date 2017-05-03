@@ -16,6 +16,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".SecondActivity">
+            <intent-filter>
+                <action android:name="me.codego.activitydelegate.action.SECOND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
         </activity>
     </application>
 

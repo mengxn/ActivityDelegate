@@ -2,6 +2,7 @@ package me.codego.utils;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -25,14 +26,16 @@ import java.io.Serializable;
 public class ActivityDelegate {
 
     private Context mContext;
-    private Bundle mBundle;//附加信息
     private boolean mIsKeep = true;//是否保留上一界面，默认保留
     private Bundle mOptions;//动画参数
 
     private int enterResId, exitResId;//退场、进场动画
 
+    private Intent intent;
+
     private ActivityDelegate(Context context) {
         mContext = context;
+        intent = new Intent();
     }
 
     public static ActivityDelegate from(Context context) {
@@ -43,13 +46,10 @@ public class ActivityDelegate {
         if (value == null) {
             return this;
         }
-        if (mBundle == null) {
-            mBundle = new Bundle();
-        }
         if (value instanceof Serializable) {
-            mBundle.putSerializable(key, (Serializable) value);
+            intent.putExtra(key, (Serializable) value);
         } else if (value instanceof Parcelable) {
-            mBundle.putParcelable(key, (Parcelable) value);
+            intent.putExtra(key, (Parcelable) value);
         }
         return this;
     }
@@ -58,10 +58,7 @@ public class ActivityDelegate {
         if (bundle == null) {
             return this;
         }
-        if (mBundle == null) {
-            mBundle = new Bundle();
-        }
-        mBundle.putAll(bundle);
+        intent.putExtras(bundle);
         return this;
     }
 
@@ -108,14 +105,37 @@ public class ActivityDelegate {
     }
 
     /**
+     * 增加flag标识
+     * @param flag
+     * @return
+     */
+    public ActivityDelegate flag(int flag) {
+        intent.addFlags(flag);
+        return this;
+    }
+
+    /**
      * 跳转到指定界面
      * @param cls
      */
     public void to(Class cls) {
-        Intent intent = new Intent(mContext, cls);
-        if (mBundle != null) {
-            intent.putExtras(mBundle);
-        }
+        intent.setComponent(new ComponentName(mContext, cls));
+        startActivity();
+    }
+
+    /**
+     * 通过action打开指定activity
+     * @param action
+     */
+    public void to(String action) {
+        intent.setAction(action);
+        startActivity();
+    }
+
+    /**
+     * 启动目标activity
+     */
+    private void startActivity() {
         ActivityCompat.startActivity(mContext, intent, mOptions);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
@@ -129,7 +149,7 @@ public class ActivityDelegate {
         }
     }
 
-    public void finish() {
+    private void finish() {
         if (mContext instanceof Activity) {
             Activity activity = (Activity) mContext;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

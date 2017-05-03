@@ -33,4 +33,10 @@ public class MainActivity extends AppCompatActivity {
                 .transition(R.anim.slide_in_right, R.anim.slide_out_left)
                 .to(SecondActivity.class);
     }
+
+    public void openSecondWithAction(View view) {
+        ActivityDelegate.from(this)
+                .transition(R.anim.slide_in_right, R.anim.slide_out_left)
+                .to("me.codego.activitydelegate.action.SECOND");
+    }
 }

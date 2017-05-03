@@ -26,5 +26,10 @@
         android:layout_height="wrap_content"
         android:text="openSecondWithAnimation"
         android:onClick="openSecondWithAnimation"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="openSecondWithAction"
+        android:onClick="openSecondWithAction"/>
 
 </LinearLayout>
