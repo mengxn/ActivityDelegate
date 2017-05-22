@@ -29,9 +29,13 @@ public class ActivityDelegate {
     private boolean mIsKeep = true;//是否保留上一界面，默认保留
     private Bundle mOptions;//动画参数
 
-    private int enterResId, exitResId;//退场、进场动画
+    //默认配置
+    private static Config defaultConfig = Config.getInstance();
 
     private Intent intent;
+
+    private static final String KEY_ANIM_ENTER = "android:activity.animEnterRes";
+    private static final String KEY_ANIM_EXIT = "android:activity.animExitRes";
 
     private ActivityDelegate(Context context) {
         mContext = context;
@@ -79,13 +83,8 @@ public class ActivityDelegate {
      * @return
      */
     public ActivityDelegate transition(int enterResId, int exitResId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(mContext, enterResId, exitResId);
-            mOptions = activityOptionsCompat.toBundle();
-        } else {
-            this.enterResId = enterResId;
-            this.exitResId = exitResId;
-        }
+        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(mContext, enterResId, exitResId);
+        mOptions = activityOptionsCompat.toBundle();
         return this;
     }
 
@@ -136,11 +135,15 @@ public class ActivityDelegate {
      * 启动目标activity
      */
     private void startActivity() {
+        if (mOptions == null && defaultConfig != null) {
+            mOptions = new Bundle(defaultConfig.options);
+        }
         ActivityCompat.startActivity(mContext, intent, mOptions);
-
+        //16以下没有动画，需要使用overridePendingTransition
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            if (mContext instanceof Activity && enterResId > 0 && exitResId > 0) {
-                ((Activity) mContext).overridePendingTransition(enterResId, exitResId);
+            if (mContext instanceof Activity && mOptions != null) {
+                Activity activity = (Activity) mContext;
+                activity.overridePendingTransition(mOptions.getInt(KEY_ANIM_ENTER), mOptions.getInt(KEY_ANIM_EXIT));
             }
         }
 
@@ -175,4 +178,35 @@ public class ActivityDelegate {
             }
         }
     }
+
+    public static class Config {
+
+        private int enterResId, exitResId;
+        //动画参数
+        private Bundle options;
+
+        private Config() {
+        }
+
+        public static Config getInstance() {
+            return new Config();
+        }
+
+        public void reset() {
+            this.enterResId = 0;
+            this.exitResId = 0;
+        }
+
+        public Config transition(int enterResId, int exitResId) {
+            this.enterResId = enterResId;
+            this.exitResId = exitResId;
+            return this;
+        }
+
+        public void apply(Context context) {
+            ActivityDelegate.defaultConfig = this;
+            options = ActivityOptionsCompat.makeCustomAnimation(context, enterResId, exitResId).toBundle();
+        }
+    }
+
 }
