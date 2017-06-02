@@ -119,7 +119,7 @@ public class ActivityDelegate {
      */
     public void to(Class cls) {
         intent.setComponent(new ComponentName(mContext, cls));
-        startActivity();
+        startActivityForResult(intent, -1);
     }
 
     /**
@@ -128,17 +128,33 @@ public class ActivityDelegate {
      */
     public void to(String action) {
         intent.setAction(action);
-        startActivity();
+        startActivityForResult(intent, -1);
+    }
+
+    /**
+     * 跳转到指定界面
+     * @param cls
+     * @param requestCode
+     * @return
+     */
+    public ActivityResponse to(Class cls, int requestCode) {
+        intent.setComponent(new ComponentName(mContext, cls));
+        startActivityForResult(intent, requestCode);
+        return ActivityResponse.createWithCode(requestCode);
     }
 
     /**
      * 启动目标activity
      */
-    private void startActivity() {
+    private void startActivityForResult(Intent intent, int requestCode){
         if (mOptions == null && defaultConfig != null) {
             mOptions = new Bundle(defaultConfig.options);
         }
-        ActivityCompat.startActivity(mContext, intent, mOptions);
+        if (mContext instanceof Activity) {
+            ActivityCompat.startActivityForResult((Activity) mContext, intent, requestCode, mOptions);
+        } else {
+            ActivityCompat.startActivity(mContext, intent, mOptions);
+        }
         //16以下没有动画，需要使用overridePendingTransition
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             if (mContext instanceof Activity && mOptions != null) {
