@@ -187,10 +187,13 @@ public class ActivityDelegate {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Intent intent = activity.getIntent();
             if (intent != null && intent.hasExtra("transition")) {
-                Transition transition = TransitionInflater.from(activity).inflateTransition(intent.getIntExtra("transition", 0));
                 Window window = activity.getWindow();
                 window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-                window.setEnterTransition(transition);
+                int resId = intent.getIntExtra("transition", 0);
+                if (resId > 0) {
+                    Transition transition = TransitionInflater.from(activity).inflateTransition(resId);
+                    window.setEnterTransition(transition);
+                }
             }
         }
     }
