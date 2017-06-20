@@ -11,6 +11,7 @@ import android.os.Parcelable;
 import android.support.annotation.TransitionRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.Fragment;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.util.Pair;
@@ -44,6 +45,10 @@ public class ActivityDelegate {
 
     public static ActivityDelegate from(Context context) {
         return new ActivityDelegate(context);
+    }
+
+    public static FragmentRequest from(Fragment fragment) {
+        return new FragmentRequest(fragment);
     }
 
     public ActivityDelegate with(String key, Object value) {
