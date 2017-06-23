@@ -1,10 +1,12 @@
-package me.codego.activitydelegate;
+package me.codego.PIntent;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import me.codego.utils.ActivityDelegate;
+import me.codego.activitydelegate.R;
+import me.codego.activitydelegate.SecondActivity;
+import me.codego.utils.PIntent;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -16,26 +18,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openSecond(View view) {
-        ActivityDelegate.from(this)
+        PIntent.from(this)
                 .to(SecondActivity.class);
     }
 
     public void openSecondWithExtra(View view) {
         Bundle bundle = new Bundle();
         bundle.putString("key", "hello world from last view");
-        ActivityDelegate.from(this)
+        PIntent.from(this)
                 .with(bundle)
                 .to(SecondActivity.class);
     }
 
     public void openSecondWithAnimation(View view) {
-        ActivityDelegate.from(this)
+        PIntent.from(this)
                 .transition(R.anim.slide_in_right, R.anim.slide_out_left)
                 .to(SecondActivity.class);
     }
 
     public void openSecondWithAction(View view) {
-        ActivityDelegate.from(this)
+        PIntent.from(this)
                 .transition(R.anim.slide_in_right, R.anim.slide_out_left)
                 .to("me.codego.activitydelegate.action.SECOND");
     }
