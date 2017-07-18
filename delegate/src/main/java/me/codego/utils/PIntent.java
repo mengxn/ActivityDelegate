@@ -17,8 +17,11 @@ import android.view.Window;
 
 public class PIntent {
 
-    public static IRequest from(Activity activity) {
-        return new ActivityRequest(activity);
+    public static IRequest from(Context context) {
+        if (!(context instanceof Activity)) {
+            throw new IllegalArgumentException("context should be activity");
+        }
+        return new ActivityRequest((Activity) context);
     }
 
     public static IRequest from(Fragment fragment) {

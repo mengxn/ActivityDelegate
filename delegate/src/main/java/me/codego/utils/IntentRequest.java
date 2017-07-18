@@ -61,14 +61,23 @@ public abstract class IntentRequest implements IRequest {
     }
 
     @Override
-    public IRequest scene(int resId, Pair<View, String>... sharedElements) {
+    public IRequest scene(int resId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             with("transition", resId);
-            mOptions = makeSceneTransitionAnimation(sharedElements).toBundle();
         }
         return this;
     }
 
+    @Override
+    public IRequest share(View view, String name) {
+        final Bundle bundle = makeSceneTransitionAnimation(Pair.create(view, name));
+        if (mOptions == null) {
+            mOptions = bundle;
+        } else {
+            mOptions.putAll(bundle);
+        }
+        return this;
+    }
 
     public IRequest flag(int flag) {
         mIntent.addFlags(flag);
@@ -109,7 +118,6 @@ public abstract class IntentRequest implements IRequest {
 
     abstract ActivityResponse startActivityForResult(Intent intent, int requestCode, Bundle options);
 
-    abstract ActivityOptionsCompat makeSceneTransitionAnimation(Pair<View, String>... sharedElements);
+    abstract Bundle makeSceneTransitionAnimation(Pair<View, String>... sharedElements);
 
-    abstract IRequest finish();
 }

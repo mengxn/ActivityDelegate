@@ -39,13 +39,12 @@ public class ActivityRequest extends IntentRequest {
     }
 
     @Override
-    ActivityOptionsCompat makeSceneTransitionAnimation(Pair<View, String>... sharedElements) {
-        return ActivityOptionsCompat.makeSceneTransitionAnimation(mActivity, sharedElements);
+    Bundle makeSceneTransitionAnimation(Pair<View, String>... sharedElements) {
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(mActivity, sharedElements).toBundle();
     }
 
     @Override
-    IRequest finish() {
+    public void finish() {
         ActivityCompat.finishAfterTransition(mActivity);
-        return this;
     }
 }

@@ -1,11 +1,9 @@
-package me.codego.PIntent;
+package me.codego.activitydelegate;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import me.codego.activitydelegate.R;
-import me.codego.activitydelegate.SecondActivity;
 import me.codego.utils.PIntent;
 
 

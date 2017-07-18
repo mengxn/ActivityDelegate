@@ -1,7 +1,6 @@
 package me.codego.utils;
 
 import android.os.Bundle;
-import android.support.v4.util.Pair;
 import android.view.View;
 
 /**
@@ -36,10 +35,17 @@ public interface IRequest {
     /**
      * 场景转换动画
      * @param resId
-     * @param pairs
      * @return
      */
-    IRequest scene(int resId, Pair<View, String>... pairs);
+    IRequest scene(int resId);
+
+    /**
+     * 共享元素动画
+     * @param view
+     * @param name
+     * @return
+     */
+    IRequest share(View view, String name);
 
     /**
      * 增加flag标识
@@ -75,4 +81,9 @@ public interface IRequest {
      * @return
      */
     IRequest keep(boolean isKeep);
+
+    /**
+     * 关闭当前界面
+     */
+    void finish();
 }

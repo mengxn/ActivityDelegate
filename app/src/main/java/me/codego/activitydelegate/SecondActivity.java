@@ -7,7 +7,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import me.codego.utils.ActivityDelegate;
+import me.codego.utils.PIntent;
+
 
 public class SecondActivity extends AppCompatActivity {
 
@@ -24,14 +25,14 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     public void closeWithAnimation(View view) {
-        ActivityDelegate.from(this).finish();
+        PIntent.from(this).finish();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                ActivityDelegate.from(this).finish();
+                PIntent.from(this).finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -41,7 +42,7 @@ public class SecondActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                ActivityDelegate.from(this).finish();
+                PIntent.from(this).finish();
                 return true;
         }
         return super.onKeyDown(keyCode, event);
