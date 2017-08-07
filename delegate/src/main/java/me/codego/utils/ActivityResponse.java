@@ -27,8 +27,12 @@ public class ActivityResponse {
 
     public void apply(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == mRequestCode) {
+            if (requestCode == mRequestCode && mCallback != null) {
                 mCallback.onResult(data);
+            }
+        } else {
+            if (requestCode == mRequestCode && mCallback instanceof BiCallback) {
+                ((BiCallback) mCallback).onCancel();
             }
         }
     }
@@ -36,5 +40,10 @@ public class ActivityResponse {
     public interface Callback {
         void onResult(Intent data);
     }
+
+    public interface BiCallback extends Callback {
+        void onCancel();
+    }
+
 
 }
