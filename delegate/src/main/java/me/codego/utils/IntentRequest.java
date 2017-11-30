@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.view.View;
 
 import java.io.Serializable;
@@ -25,8 +24,9 @@ public abstract class IntentRequest implements IRequest {
 
     static PIntent.Config defaultConfig;
 
+    static final String ANIMATION_SCENE = "transition";
 
-    public IntentRequest(Context context) {
+    IntentRequest(Context context) {
         mContext = context;
         mIntent = new Intent();
     }
@@ -63,22 +63,26 @@ public abstract class IntentRequest implements IRequest {
     @Override
     public IRequest scene(int resId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            with("transition", resId);
+            with(ANIMATION_SCENE, resId);
         }
         return this;
     }
 
     @Override
     public IRequest share(View view, String name) {
-        final Bundle bundle = makeSceneTransitionAnimation(Pair.create(view, name));
         if (mOptions == null) {
-            mOptions = bundle;
-        } else {
-            mOptions.putAll(bundle);
+            mOptions = new Bundle();
         }
+        mOptions.putAll(makeSceneTransitionAnimation(view, name));
         return this;
     }
 
+    /**
+     * Add additional flags to the intent
+     * @param flag
+     * @return
+     */
+    @Override
     public IRequest flag(int flag) {
         mIntent.addFlags(flag);
         return this;
@@ -116,8 +120,21 @@ public abstract class IntentRequest implements IRequest {
         return this;
     }
 
+    /**
+     * 打开 Activity
+     * @param intent
+     * @param requestCode
+     * @param options
+     * @return
+     */
     abstract ActivityResponse startActivityForResult(Intent intent, int requestCode, Bundle options);
 
-    abstract Bundle makeSceneTransitionAnimation(Pair<View, String>... sharedElements);
+    /**
+     * 生产共享元素
+     * @param sharedElement
+     * @param sharedElementName
+     * @return
+     */
+    abstract Bundle makeSceneTransitionAnimation(View sharedElement, String sharedElementName);
 
 }

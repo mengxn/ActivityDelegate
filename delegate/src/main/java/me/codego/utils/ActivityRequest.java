@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.view.View;
 
 /**
@@ -20,7 +19,7 @@ public class ActivityRequest extends IntentRequest {
     private static final String KEY_ANIM_ENTER = "android:activity.animEnterRes";
     private static final String KEY_ANIM_EXIT = "android:activity.animExitRes";
 
-    public ActivityRequest(Activity activity) {
+    ActivityRequest(Activity activity) {
         super(activity);
         mActivity = activity;
     }
@@ -39,8 +38,8 @@ public class ActivityRequest extends IntentRequest {
     }
 
     @Override
-    Bundle makeSceneTransitionAnimation(Pair<View, String>... sharedElements) {
-        return ActivityOptionsCompat.makeSceneTransitionAnimation(mActivity, sharedElements).toBundle();
+    final Bundle makeSceneTransitionAnimation(View sharedElement, String sharedElementName) {
+        return ActivityOptionsCompat.makeSceneTransitionAnimation(mActivity, sharedElement, sharedElementName).toBundle();
     }
 
     @Override
