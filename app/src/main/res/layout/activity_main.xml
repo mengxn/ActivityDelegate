@@ -14,22 +14,44 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="openSecond"
-        android:onClick="openSecond"/>
+        android:onClick="openSecond"
+        android:text="open Second"
+        android:textAllCaps="false"/>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="openSecondWithExtra"
-        android:onClick="openSecondWithExtra"/>
+        android:onClick="openSecondWithExtra"
+        android:text="open second with extra"
+        android:textAllCaps="false"/>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="openSecondWithAnimation"
-        android:onClick="openSecondWithAnimation"/>
+        android:onClick="openSecondWithAnimation"
+        android:text="open second with animation"
+        android:textAllCaps="false"/>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="openSecondWithAction"
-        android:onClick="openSecondWithAction"/>
+        android:onClick="openSecondWithAction"
+        android:text="open second with action"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="openSecondWithShareView"
+        android:transitionName="share"
+        android:text="open second with share view"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="openSecondWithCallback"
+        android:text="open second with callback"
+        android:textAllCaps="false"/>
 
 </LinearLayout>

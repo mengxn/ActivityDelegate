@@ -20,6 +20,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="closeWithAnimation"
-        android:text="close with animation"/>
+        android:text="close with animation"
+        android:textAllCaps="false"
+        android:transitionName="share"/>
 
 </LinearLayout>
