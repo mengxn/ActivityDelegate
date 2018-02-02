@@ -73,7 +73,10 @@ public abstract class IntentRequest implements IRequest {
         if (mOptions == null) {
             mOptions = new Bundle();
         }
-        mOptions.putAll(makeSceneTransitionAnimation(view, name));
+        final Bundle bundle = makeSceneTransitionAnimation(view, name);
+        if (bundle != null) {
+            mOptions.putAll(bundle);
+        }
         return this;
     }
 
