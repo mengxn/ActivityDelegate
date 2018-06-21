@@ -1,4 +1,4 @@
-package me.codego.utils;
+package me.codego.utils.delegate;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,8 +12,7 @@ import android.view.Window;
 
 /**
  *
- * @author mengxn
- * @date 2017/6/20
+ * @author mengxn 2017/6/20
  */
 
 public class PIntent {
@@ -24,7 +23,7 @@ public class PIntent {
 
     /**
      * 执行当前界面场景动画
-     * @param activity
+     * @param activity activity
      */
     public static void applyScene(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

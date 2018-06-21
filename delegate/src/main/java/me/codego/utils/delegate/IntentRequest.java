@@ -1,4 +1,4 @@
-package me.codego.utils;
+package me.codego.utils.delegate;
 
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -14,8 +14,7 @@ import android.view.View;
 import java.io.Serializable;
 
 /**
- * @author mengxn
- * @date 2017/6/20
+ * @author mengxn 2017/6/20
  */
 
 public class IntentRequest implements IRequest {
@@ -110,8 +109,8 @@ public class IntentRequest implements IRequest {
     /**
      * Add additional flags to the intent
      *
-     * @param flag
-     * @return
+     * @param flag 标识
+     * @return IRequest
      */
     @Override
     public IRequest flag(int flag) {

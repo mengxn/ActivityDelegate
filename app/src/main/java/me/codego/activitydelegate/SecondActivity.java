@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import me.codego.utils.PIntent;
+import me.codego.utils.delegate.PIntent;
 
 
 public class SecondActivity extends AppCompatActivity {
