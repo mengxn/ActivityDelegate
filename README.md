@@ -33,9 +33,9 @@ PIntent.from(this)
 ```
 例：打开 Activity，并处理回调数据
 ```java
-mActivityResponse = PIntent.from(this)
+PIntent.from(this)
         .to(SecondActivity.class, REQUEST_OPEN_SECOND)
-        .result(new ActivityResponse.Callback() {
+        .result(new IRequest.Callback() {
             @Override
             public void onResult(Intent data) {
                 Toast.makeText(MainActivity.this, data.getStringExtra("text"), Toast.LENGTH_SHORT).show();
