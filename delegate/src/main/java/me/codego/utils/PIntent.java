@@ -6,26 +6,20 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.Fragment;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.Window;
 
 /**
- * Created by mengxn on 2017/6/20.
+ *
+ * @author mengxn
+ * @date 2017/6/20
  */
 
 public class PIntent {
 
-    public static IRequest from(Context context) {
-        if (!(context instanceof Activity)) {
-            throw new IllegalArgumentException("context should be activity");
-        }
-        return new ActivityRequest((Activity) context);
-    }
-
-    public static IRequest from(Fragment fragment) {
-        return new FragmentRequest(fragment);
+    public static IRequest from(Activity activity) {
+        return new IntentRequest(activity);
     }
 
     /**

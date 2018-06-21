@@ -1,16 +1,19 @@
 package me.codego.utils;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 /**
- * Created by mengxn on 2017/6/20.
+ * @author mengxn
+ * @date 2017/6/20
  */
 
 public interface IRequest {
 
     /**
      * 附带参数
+     *
      * @param key
      * @param value
      * @return
@@ -19,6 +22,7 @@ public interface IRequest {
 
     /**
      * 附带参数
+     *
      * @param bundle
      * @return
      */
@@ -26,6 +30,7 @@ public interface IRequest {
 
     /**
      * 场景转换动画
+     *
      * @param enterResId
      * @param exitResId
      * @return
@@ -34,6 +39,7 @@ public interface IRequest {
 
     /**
      * 场景转换动画
+     *
      * @param resId
      * @return
      */
@@ -41,6 +47,7 @@ public interface IRequest {
 
     /**
      * 共享元素动画
+     *
      * @param view
      * @param name
      * @return
@@ -49,6 +56,7 @@ public interface IRequest {
 
     /**
      * 增加flag标识
+     *
      * @param flag
      * @return
      */
@@ -56,12 +64,21 @@ public interface IRequest {
 
     /**
      * 跳转到指定界面
+     *
      * @param action
      */
     void to(String action);
 
     /**
      * 跳转到指定界面
+     *
+     * @param action
+     */
+    IRequest to(String action, int requestCode);
+
+    /**
+     * 跳转到指定界面
+     *
      * @param cls
      * @return
      */
@@ -69,14 +86,18 @@ public interface IRequest {
 
     /**
      * 跳转到指定界面
+     *
      * @param cls
      * @param requestCode
      * @return
      */
-    ActivityResponse to(Class cls, int requestCode);
+    IRequest to(Class cls, int requestCode);
+
+    void result(IRequest.Callback callback);
 
     /**
      * 是否保留上一界面
+     *
      * @param isKeep
      * @return
      */
@@ -86,4 +107,12 @@ public interface IRequest {
      * 关闭当前界面
      */
     void finish();
+
+    interface Callback {
+        void onResult(Intent data);
+    }
+
+    interface BiCallback extends Callback {
+        void onCancel();
+    }
 }

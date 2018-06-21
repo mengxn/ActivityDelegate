@@ -1,34 +1,61 @@
 package me.codego.utils;
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 
 import java.io.Serializable;
 
 /**
- * Created by mengxn on 2017/6/20.
+ * @author mengxn
+ * @date 2017/6/20
  */
 
-public abstract class IntentRequest implements IRequest {
+public class IntentRequest implements IRequest {
 
     private Intent mIntent;
     private boolean mIsKeep = true;
     private Bundle mOptions;
-    private Context mContext;
+    private Activity mActivity;
+    private DelegateFragment mDelegateFragment;
 
     static PIntent.Config defaultConfig;
 
+    private static final String TAG = "IntentRequest";
     static final String ANIMATION_SCENE = "transition";
 
-    IntentRequest(Context context) {
-        mContext = context;
+    private static final String KEY_ANIM_ENTER = "android:activity.animEnterRes";
+    private static final String KEY_ANIM_EXIT = "android:activity.animExitRes";
+
+    IntentRequest(Activity activity) {
+        mActivity = activity;
         mIntent = new Intent();
+        mDelegateFragment = getDelegateFragment(activity);
+    }
+
+    private DelegateFragment getDelegateFragment(Activity activity) {
+        DelegateFragment delegateFragment = findDelegateFragment(activity);
+        if (delegateFragment == null) {
+            delegateFragment = new DelegateFragment();
+            final FragmentManager fragmentManager = activity.getFragmentManager();
+            fragmentManager
+                    .beginTransaction()
+                    .add(delegateFragment, TAG)
+                    .commitAllowingStateLoss();
+            fragmentManager.executePendingTransactions();
+        }
+        return delegateFragment;
+    }
+
+    private DelegateFragment findDelegateFragment(Activity activity) {
+        return (DelegateFragment) activity.getFragmentManager().findFragmentByTag(TAG);
     }
 
     @Override
@@ -55,7 +82,7 @@ public abstract class IntentRequest implements IRequest {
 
     @Override
     public IRequest transition(int enterResId, int exitResId) {
-        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(mContext, enterResId, exitResId);
+        ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(mActivity, enterResId, exitResId);
         mOptions = activityOptionsCompat.toBundle();
         return this;
     }
@@ -73,7 +100,7 @@ public abstract class IntentRequest implements IRequest {
         if (mOptions == null) {
             mOptions = new Bundle();
         }
-        final Bundle bundle = makeSceneTransitionAnimation(view, name);
+        final Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(mActivity, view, name).toBundle();
         if (bundle != null) {
             mOptions.putAll(bundle);
         }
@@ -82,6 +109,7 @@ public abstract class IntentRequest implements IRequest {
 
     /**
      * Add additional flags to the intent
+     *
      * @param flag
      * @return
      */
@@ -94,7 +122,14 @@ public abstract class IntentRequest implements IRequest {
     @Override
     public void to(String action) {
         mIntent.setAction(action);
-        startActivityForResult(mIntent, -1, null);
+        to(mIntent, -1, mOptions);
+    }
+
+    @Override
+    public IRequest to(String action, int requestCode) {
+        mIntent.setAction(action);
+        to(mIntent, requestCode, mOptions);
+        return this;
     }
 
     @Override
@@ -103,18 +138,36 @@ public abstract class IntentRequest implements IRequest {
     }
 
     @Override
-    public ActivityResponse to(Class cls, int requestCode) {
-        mIntent.setComponent(new ComponentName(mContext, cls));
+    public IRequest to(Class cls, int requestCode) {
+        mIntent.setComponent(new ComponentName(mActivity, cls));
         if (mOptions == null && defaultConfig != null) {
             mOptions = new Bundle(defaultConfig.options);
         }
-        ActivityResponse response = startActivityForResult(mIntent, requestCode, mOptions);
+        to(mIntent, requestCode, mOptions);
+        return this;
+    }
+
+    private void to(Intent intent, int requestCode, Bundle options) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            mDelegateFragment.startActivityForResult(intent, requestCode, options);
+        } else {
+            mDelegateFragment.startActivityForResult(intent, requestCode);
+            //16以下没有动画，需要使用overridePendingTransition
+            if (options != null) {
+                mActivity.overridePendingTransition(options.getInt(KEY_ANIM_ENTER), options.getInt(KEY_ANIM_EXIT));
+            }
+        }
 
         if (!mIsKeep) {
             finish();
         }
+    }
 
-        return response;
+    @Override
+    public void result(IRequest.Callback callback) {
+        if (mDelegateFragment != null) {
+            mDelegateFragment.setCallback(callback);
+        }
     }
 
     @Override
@@ -123,21 +176,8 @@ public abstract class IntentRequest implements IRequest {
         return this;
     }
 
-    /**
-     * 打开 Activity
-     * @param intent
-     * @param requestCode
-     * @param options
-     * @return
-     */
-    abstract ActivityResponse startActivityForResult(Intent intent, int requestCode, Bundle options);
-
-    /**
-     * 生产共享元素
-     * @param sharedElement
-     * @param sharedElementName
-     * @return
-     */
-    abstract Bundle makeSceneTransitionAnimation(View sharedElement, String sharedElementName);
-
+    @Override
+    public void finish() {
+        ActivityCompat.finishAfterTransition(mActivity);
+    }
 }
