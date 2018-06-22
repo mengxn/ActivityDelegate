@@ -1,4 +1,4 @@
-package me.codego.utils.delegate;
+package me.codego.delegate;
 
 
 import android.app.Activity;

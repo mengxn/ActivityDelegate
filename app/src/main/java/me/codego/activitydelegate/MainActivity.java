@@ -6,8 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import me.codego.utils.delegate.IRequest;
-import me.codego.utils.delegate.PIntent;
+import me.codego.delegate.IRequest;
+import me.codego.delegate.PIntent;
 
 
 public class MainActivity extends AppCompatActivity {

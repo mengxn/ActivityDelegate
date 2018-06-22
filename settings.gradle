@@ -1,1 +1,1 @@
-include ':app', ':delegate'
+include ':app', ':activity-delegate'
