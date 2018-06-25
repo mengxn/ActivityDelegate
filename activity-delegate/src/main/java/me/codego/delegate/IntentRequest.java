@@ -1,7 +1,6 @@
 package me.codego.delegate;
 
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Build;
@@ -9,6 +8,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 import java.io.Serializable;
@@ -33,28 +34,28 @@ public class IntentRequest implements IRequest {
     private static final String KEY_ANIM_ENTER = "android:activity.animEnterRes";
     private static final String KEY_ANIM_EXIT = "android:activity.animExitRes";
 
-    IntentRequest(Activity activity) {
+    IntentRequest(FragmentActivity activity) {
         mActivity = activity;
         mIntent = new Intent();
         mDelegateFragment = getDelegateFragment(activity);
     }
 
-    private DelegateFragment getDelegateFragment(Activity activity) {
-        DelegateFragment delegateFragment = findDelegateFragment(activity);
-        if (delegateFragment == null) {
-            delegateFragment = new DelegateFragment();
-            final FragmentManager fragmentManager = activity.getFragmentManager();
+    private DelegateFragment getDelegateFragment(FragmentActivity activity) {
+        DelegateFragment fragment = findDelegateFragment(activity);
+        if (fragment == null) {
+            fragment = new DelegateFragment();
+            final FragmentManager fragmentManager = activity.getSupportFragmentManager();
             fragmentManager
                     .beginTransaction()
-                    .add(delegateFragment, TAG)
+                    .add(fragment, TAG)
                     .commitAllowingStateLoss();
             fragmentManager.executePendingTransactions();
         }
-        return delegateFragment;
+        return fragment;
     }
 
-    private DelegateFragment findDelegateFragment(Activity activity) {
-        return (DelegateFragment) activity.getFragmentManager().findFragmentByTag(TAG);
+    private DelegateFragment findDelegateFragment(FragmentActivity activity) {
+        return (DelegateFragment) activity.getSupportFragmentManager().findFragmentByTag(TAG);
     }
 
     @Override
@@ -66,6 +67,8 @@ public class IntentRequest implements IRequest {
             mIntent.putExtra(key, (Serializable) value);
         } else if (value instanceof Parcelable) {
             mIntent.putExtra(key, (Parcelable) value);
+        } else if (value instanceof CharSequence) {
+            mIntent.putExtra(key, ((CharSequence) value));
         }
         return this;
     }

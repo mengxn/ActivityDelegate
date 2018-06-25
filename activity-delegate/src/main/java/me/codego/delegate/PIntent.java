@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.FragmentActivity;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.Window;
@@ -17,8 +18,11 @@ import android.view.Window;
 
 public class PIntent {
 
-    public static IRequest from(Activity activity) {
-        return new IntentRequest(activity);
+    public static IRequest from(Context context) {
+        if (context instanceof FragmentActivity) {
+            return new IntentRequest((FragmentActivity) context);
+        }
+        throw new IllegalArgumentException("context should extend FragmentActivity");
     }
 
     /**
@@ -43,7 +47,10 @@ public class PIntent {
     public static class Config {
 
         private int enterResId, exitResId;
-        //动画参数
+
+        /**
+         * 动画参数
+         */
         Bundle options;
 
         private Config() {

@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putString("key", "hello world from last view");
         PIntent.from(this)
+                .with("num", 1)
                 .with(bundle)
                 .to(SecondActivity.class);
     }
