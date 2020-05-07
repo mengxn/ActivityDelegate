@@ -40,6 +40,7 @@
         android:textAllCaps="false"/>
 
     <Button
+        android:id="@+id/share_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="openSecondWithShareView"
@@ -53,5 +54,12 @@
         android:onClick="openSecondWithCallback"
         android:text="open second with callback"
         android:textAllCaps="false"/>
+
+    <ImageView
+        android:id="@+id/icon_img"
+        android:transitionName="icon"
+        android:layout_width="match_parent"
+        android:src="@mipmap/ic_launcher"
+        android:layout_height="100dp"/>
 
 </LinearLayout>

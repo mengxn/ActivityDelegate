@@ -6,11 +6,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.List;
+
 import me.codego.delegate.IRequest;
+import me.codego.delegate.IShareSelector;
+import me.codego.delegate.IShareView;
 import me.codego.delegate.PIntent;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IShareView {
 
     private static final int REQUEST_OPEN_SECOND = 1;
 
@@ -46,11 +50,32 @@ public class MainActivity extends AppCompatActivity {
                 .to("me.codego.activitydelegate.action.SECOND");
     }
 
+    private boolean isReturn = false;
+
     public void openSecondWithShareView(View view) {
+        // isReturn = false;
+        isReturn = false;
+
         PIntent.from(this)
                 .with("key", "open with share view")
-                .share(view, "share")
+                .share(this)
                 .to(SecondActivity.class);
+    }
+
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
+
+        PIntent.onActivityReenter(this, resultCode, data, new IShareSelector() {
+            @Override
+            public void onShare(List<String> shareList) {
+                if ("icon".equals(shareList.get(0))) {
+                    isReturn = true;
+                } else {
+                    isReturn = false;
+                }
+            }
+        });
     }
 
     public void openSecondWithCallback(View view) {
@@ -64,4 +89,11 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    public View[] getShareViews() {
+        if (isReturn) {
+            return new View[]{findViewById(R.id.icon_img)};
+        }
+        return new View[]{findViewById(R.id.share_btn)};
+    }
 }
