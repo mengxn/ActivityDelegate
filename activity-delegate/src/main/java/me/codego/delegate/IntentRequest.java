@@ -151,7 +151,11 @@ public class IntentRequest implements IRequest {
 
     private void to(Intent intent, int requestCode, Bundle options) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mDelegateFragment.startActivityForResult(intent, requestCode, options);
+            if (requestCode == -1) {
+                mDelegateFragment.startActivity(intent, options);
+            } else {
+                mDelegateFragment.startActivityForResult(intent, requestCode, options);
+            }
         } else {
             if (requestCode == -1) {
                 mDelegateFragment.startActivity(intent);

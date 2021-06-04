@@ -21,6 +21,12 @@ public class DelegateFragment extends Fragment {
     }
 
     @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        super.startActivityForResult(intent, requestCode);
+        mRequestCode = requestCode;
+    }
+
+    @Override
     public void startActivityForResult(Intent intent, int requestCode, Bundle options) {
         super.startActivityForResult(intent, requestCode, options);
         mRequestCode = requestCode;
