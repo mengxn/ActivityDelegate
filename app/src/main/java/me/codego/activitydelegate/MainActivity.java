@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements IShareView {
 
         PIntent.from(this)
                 .with("key", "open with share view")
-                .share(this)
+                .share(view, "")
                 .to(SecondActivity.class);
     }
 
@@ -68,12 +68,13 @@ public class MainActivity extends AppCompatActivity implements IShareView {
 
         PIntent.onActivityReenter(this, resultCode, data, new IShareSelector() {
             @Override
-            public void onShare(List<String> shareList) {
+            public View[] onShare(List<String> shareList) {
                 if ("icon".equals(shareList.get(0))) {
                     isReturn = true;
                 } else {
                     isReturn = false;
                 }
+                return new View[0];
             }
         });
     }
