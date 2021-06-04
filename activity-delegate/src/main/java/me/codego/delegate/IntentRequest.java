@@ -153,7 +153,12 @@ public class IntentRequest implements IRequest {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             mDelegateFragment.startActivityForResult(intent, requestCode, options);
         } else {
-            mDelegateFragment.startActivityForResult(intent, requestCode);
+            if (requestCode == -1) {
+                mDelegateFragment.startActivity(intent);
+            } else {
+                mDelegateFragment.startActivityForResult(intent, requestCode);
+            }
+
             //16以下没有动画，需要使用overridePendingTransition
             if (options != null) {
                 mActivity.overridePendingTransition(options.getInt(KEY_ANIM_ENTER), options.getInt(KEY_ANIM_EXIT));
