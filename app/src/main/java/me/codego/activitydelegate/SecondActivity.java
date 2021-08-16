@@ -1,6 +1,5 @@
 package me.codego.activitydelegate;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewCompat;
@@ -24,7 +23,7 @@ public class SecondActivity extends AppCompatActivity implements IShareView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // PIntent.applyScene(this);
-        PIntent.applyShare(this, this);
+        // PIntent.applyShare(this, this);
 
         setContentView(R.layout.activity_second);
         mCloseBtn = findViewById(R.id.close_btn);
@@ -54,8 +53,11 @@ public class SecondActivity extends AppCompatActivity implements IShareView {
     }
 
     public void closeWithAnimation(View view) {
-        setResult(RESULT_OK, new Intent().putExtra("text", "something with second"));
-        PIntent.from(this).finish();
+        // setResult(RESULT_OK, new Intent().putExtra("text", "something with second"));
+        PIntent.from(this)
+                .transition(R.anim.fade_in, R.anim.slide_out_right)
+                .finish();
+        // PIntent.from(this).to(SecondActivity.class);
     }
 
     @Override

@@ -170,34 +170,33 @@ public class PIntent {
 
     public static class Config {
 
-        private int enterResId, exitResId;
+        private Context context;
 
         /**
          * 动画参数
          */
-        Bundle options;
+        Bundle openAnimOptions;
+        Bundle closeAnimOptions;
 
-        private Config() {
+        private Config(Context context) {
+            this.context = context.getApplicationContext();
         }
 
-        public static Config getInstance() {
-            return new Config();
+        public static Config newConfig(Context context) {
+            return new Config(context);
         }
 
-        public void reset() {
-            this.enterResId = 0;
-            this.exitResId = 0;
-        }
-
-        public Config transition(int enterResId, int exitResId) {
-            this.enterResId = enterResId;
-            this.exitResId = exitResId;
+        public Config transition(int openEnterResId, int openExitResId, int closeEnterResId, int closeExitResId) {
+            openAnimOptions = ActivityOptionsCompat.makeCustomAnimation(context, openEnterResId, openExitResId).toBundle();
+            closeAnimOptions = ActivityOptionsCompat.makeCustomAnimation(context, closeEnterResId, closeExitResId).toBundle();
             return this;
         }
 
-        public void apply(Context context) {
-            IntentRequest.defaultConfig = this;
-            options = ActivityOptionsCompat.makeCustomAnimation(context, enterResId, exitResId).toBundle();
+        /**
+         * apply config
+         */
+        public void apply() {
+            IntentRequest.mConfig = this;
         }
     }
 

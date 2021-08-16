@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 /**
  * @author mengxn 2017/6/20
@@ -26,13 +27,10 @@ public class IntentRequest implements IRequest {
     private Activity mActivity;
     private DelegateFragment mDelegateFragment;
 
-    static PIntent.Config defaultConfig;
+    static PIntent.Config mConfig;
 
     private static final String TAG = "IntentRequest";
     static final String ANIMATION_SCENE = "transition";
-
-    private static final String KEY_ANIM_ENTER = "android:activity.animEnterRes";
-    private static final String KEY_ANIM_EXIT = "android:activity.animExitRes";
 
     IntentRequest(FragmentActivity activity) {
         mActivity = activity;
@@ -142,8 +140,11 @@ public class IntentRequest implements IRequest {
     @Override
     public IRequest to(Class cls, int requestCode) {
         mIntent.setComponent(new ComponentName(mActivity, cls));
-        if (mOptions == null && defaultConfig != null) {
-            mOptions = new Bundle(defaultConfig.options);
+        if (mOptions == null && mConfig != null) {
+            mOptions = new Bundle();
+            if (mConfig.openAnimOptions != null) {
+                mOptions.putAll(mConfig.openAnimOptions);
+            }
         }
         to(mIntent, requestCode, mOptions);
         return this;
@@ -165,7 +166,7 @@ public class IntentRequest implements IRequest {
 
             //16以下没有动画，需要使用overridePendingTransition
             if (options != null) {
-                mActivity.overridePendingTransition(options.getInt(KEY_ANIM_ENTER), options.getInt(KEY_ANIM_EXIT));
+                mActivity.overridePendingTransition(options.getInt(getEnterAnimKey()), options.getInt(getExitAnimKey()));
             }
         }
 
@@ -190,5 +191,36 @@ public class IntentRequest implements IRequest {
     @Override
     public void finish() {
         ActivityCompat.finishAfterTransition(mActivity);
+        String enterKey = getEnterAnimKey();
+        String exitKey = getExitAnimKey();
+        if (mOptions.containsKey(enterKey) || mOptions.containsKey(exitKey)) {
+            mActivity.overridePendingTransition(mOptions.getInt(enterKey, 0), mOptions.getInt(exitKey, 0));
+        } else if (mConfig != null && mConfig.closeAnimOptions != null) {
+            mActivity.overridePendingTransition(mConfig.closeAnimOptions.getInt(enterKey, 0), mConfig.closeAnimOptions.getInt(exitKey, 0));
+        }
     }
+
+    private String getEnterAnimKey() {
+        return getAnimKey("KEY_ANIM_ENTER_RES_ID", "android:activity.animEnterRes");
+    }
+
+    private String getExitAnimKey() {
+        return getAnimKey("KEY_ANIM_EXIT_RES_ID", "android:activity.animExitRes");
+    }
+
+    private String getAnimKey(String key, String defaultValue) {
+        try {
+            Class<?> clazz = Class.forName("ActivityOptions");
+            Field field = clazz.getField(key);
+            return (String)field.get(null);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return defaultValue;
+    }
+
 }

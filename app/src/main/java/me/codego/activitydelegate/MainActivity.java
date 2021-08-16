@@ -40,13 +40,13 @@ public class MainActivity extends AppCompatActivity implements IShareView {
 
     public void openSecondWithAnimation(View view) {
         PIntent.from(this)
-                .transition(R.anim.slide_in_right, R.anim.slide_out_left)
+                .transition(R.anim.slide_in_right, R.anim.fade_out)
                 .to(SecondActivity.class);
     }
 
     public void openSecondWithAction(View view) {
         PIntent.from(this)
-                .transition(R.anim.slide_in_right, R.anim.slide_out_left)
+                .transition(R.anim.slide_in_right, R.anim.fade_out)
                 .to("me.codego.activitydelegate.action.SECOND");
     }
 
