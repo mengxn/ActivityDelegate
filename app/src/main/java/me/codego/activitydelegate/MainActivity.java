@@ -4,24 +4,31 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.List;
 
 import me.codego.delegate.IRequest;
-import me.codego.delegate.IShareSelector;
-import me.codego.delegate.IShareView;
+import me.codego.delegate.IShareViewSelector;
 import me.codego.delegate.PIntent;
 
 
-public class MainActivity extends AppCompatActivity implements IShareView {
+public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_OPEN_SECOND = 1;
+
+    private ImageView mIconView;
+    private Button mOpenWithAnimView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mIconView = findViewById(R.id.icon_img);
+        mOpenWithAnimView = findViewById(R.id.share_btn);
+
     }
 
     public void openSecond(View view) {
@@ -58,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements IShareView {
 
         PIntent.from(this)
                 .with("key", "open with share view")
-                .share(view, "")
+                .share(view, "button")
                 .to(SecondActivity.class);
     }
 
@@ -66,15 +73,22 @@ public class MainActivity extends AppCompatActivity implements IShareView {
     public void onActivityReenter(int resultCode, Intent data) {
         super.onActivityReenter(resultCode, data);
 
-        PIntent.onActivityReenter(this, resultCode, data, new IShareSelector() {
+        PIntent.onActivityReenter(this, resultCode, data, new IShareViewSelector() {
             @Override
-            public View[] onShare(List<String> shareList) {
-                if ("icon".equals(shareList.get(0))) {
-                    isReturn = true;
-                } else {
-                    isReturn = false;
+            public View[] selectShareView(List<String> shareList) {
+                View[] views = new View[shareList.size()];
+                for (int i = 0; i < shareList.size(); i++) {
+                    switch (shareList.get(i)) {
+                        case "icon":
+                            views[i] = mIconView;
+                            break;
+                        case "button":
+                            views[i] = mOpenWithAnimView;
+                        default:
+                            break;
+                    }
                 }
-                return new View[0];
+                return views;
             }
         });
     }
@@ -90,11 +104,4 @@ public class MainActivity extends AppCompatActivity implements IShareView {
                 });
     }
 
-    @Override
-    public View[] getShareViews() {
-        if (isReturn) {
-            return new View[]{findViewById(R.id.icon_img)};
-        }
-        return new View[]{findViewById(R.id.share_btn)};
-    }
 }

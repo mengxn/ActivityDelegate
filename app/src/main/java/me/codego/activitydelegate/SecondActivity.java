@@ -2,20 +2,23 @@ package me.codego.activitydelegate;
 
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import me.codego.delegate.IShareView;
+import java.util.List;
+
+import me.codego.delegate.IShareViewSelector;
 import me.codego.delegate.PIntent;
 
 
-public class SecondActivity extends AppCompatActivity implements IShareView {
+public class SecondActivity extends AppCompatActivity implements IShareViewSelector {
 
+    private ImageView mIconIv;
     private Button mCloseBtn;
     boolean isReturn = false;
 
@@ -24,6 +27,7 @@ public class SecondActivity extends AppCompatActivity implements IShareView {
         super.onCreate(savedInstanceState);
         // PIntent.applyScene(this);
         // PIntent.applyShare(this, this);
+        PIntent.postStartTransition(this, this);
 
         setContentView(R.layout.activity_second);
         mCloseBtn = findViewById(R.id.close_btn);
@@ -35,29 +39,33 @@ public class SecondActivity extends AppCompatActivity implements IShareView {
     }
 
     @Override
-    public void finishAfterTransition() {
-        isReturn = true;
-        PIntent.finishAfterTransition(this, this);
-        super.finishAfterTransition();
-    }
-
-    @Override
-    public View[] getShareViews() {
-        String transitionName = "share";
-        if (isReturn) {
-            transitionName = "icon";
+    public View[] selectShareView(List<String> transitionNameList) {
+        View[] views = new View[transitionNameList.size()];
+        for (int i = 0; i < transitionNameList.size(); i++) {
+            switch (transitionNameList.get(i)) {
+                case "button":
+                    views[i] = mCloseBtn;
+                    break;
+                case "icon":
+                    views[i] = mIconIv;
+                    break;
+                default:
+                    break;
+            }
         }
-        ViewCompat.setTransitionName(mCloseBtn, transitionName);
-
-        return new View[]{mCloseBtn};
+        return views;
     }
 
     public void closeWithAnimation(View view) {
-        // setResult(RESULT_OK, new Intent().putExtra("text", "something with second"));
         PIntent.from(this)
-                .transition(R.anim.fade_in, R.anim.slide_out_right)
+                .share(view, "button")
                 .finish();
-        // PIntent.from(this).to(SecondActivity.class);
+    }
+
+    public void closeIconWithAnim(View view) {
+        PIntent.from(this)
+                .share(view, "icon")
+                .finish();
     }
 
     @Override

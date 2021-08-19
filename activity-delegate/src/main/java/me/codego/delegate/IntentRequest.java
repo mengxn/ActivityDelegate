@@ -10,10 +10,16 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.SharedElementCallback;
+import android.support.v4.util.Pair;
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author mengxn 2017/6/20
@@ -23,10 +29,19 @@ public class IntentRequest implements IRequest {
 
     private Intent mIntent;
     private boolean mIsKeep = true;
-    private Bundle mOptions;
+    /**
+     * 页面过渡动画参数
+     */
+    private Bundle mCustomOptions;
+    /**
+     * 场景元素动画
+     */
+    private List<Pair<View, String>> mShareViewList;
     private Activity mActivity;
     private DelegateFragment mDelegateFragment;
-
+    /**
+     * 默认配置信息
+     */
     static PIntent.Config mConfig;
 
     private static final String TAG = "IntentRequest";
@@ -83,7 +98,7 @@ public class IntentRequest implements IRequest {
     @Override
     public IRequest transition(int enterResId, int exitResId) {
         ActivityOptionsCompat activityOptionsCompat = ActivityOptionsCompat.makeCustomAnimation(mActivity, enterResId, exitResId);
-        mOptions = activityOptionsCompat.toBundle();
+        mCustomOptions = activityOptionsCompat.toBundle();
         return this;
     }
 
@@ -97,13 +112,11 @@ public class IntentRequest implements IRequest {
 
     @Override
     public IRequest share(View view, String name) {
-        if (mOptions == null) {
-            mOptions = new Bundle();
+        ViewCompat.setTransitionName(view, name);
+        if (mShareViewList == null) {
+            mShareViewList = new ArrayList<>();
         }
-        final Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation(mActivity, view, name).toBundle();
-        if (bundle != null) {
-            mOptions.putAll(bundle);
-        }
+        mShareViewList.add(new Pair<View, String>(view, name));
         return this;
     }
 
@@ -122,13 +135,13 @@ public class IntentRequest implements IRequest {
     @Override
     public void to(String action) {
         mIntent.setAction(action);
-        to(mIntent, -1, mOptions);
+        to(mIntent, -1, getOptions());
     }
 
     @Override
     public IRequest to(String action, int requestCode) {
         mIntent.setAction(action);
-        to(mIntent, requestCode, mOptions);
+        to(mIntent, requestCode, getOptions());
         return this;
     }
 
@@ -140,13 +153,7 @@ public class IntentRequest implements IRequest {
     @Override
     public IRequest to(Class cls, int requestCode) {
         mIntent.setComponent(new ComponentName(mActivity, cls));
-        if (mOptions == null && mConfig != null) {
-            mOptions = new Bundle();
-            if (mConfig.openAnimOptions != null) {
-                mOptions.putAll(mConfig.openAnimOptions);
-            }
-        }
-        to(mIntent, requestCode, mOptions);
+        to(mIntent, requestCode, getOptions());
         return this;
     }
 
@@ -175,6 +182,22 @@ public class IntentRequest implements IRequest {
         }
     }
 
+    /**
+     * 获取过渡动画参数
+     */
+    private Bundle getOptions() {
+        if (mShareViewList != null && mShareViewList.size() > 0) {
+            return ActivityOptionsCompat.makeSceneTransitionAnimation(mActivity, mShareViewList.toArray(new Pair[mShareViewList.size()])).toBundle();
+        }
+        if (mCustomOptions != null) {
+            return mCustomOptions;
+        }
+        if (mConfig != null && mConfig.openAnimOptions != null) {
+            return new Bundle(mConfig.openAnimOptions);
+        }
+        return null;
+    }
+
     @Override
     public void result(IRequest.Callback callback) {
         if (mDelegateFragment != null) {
@@ -190,13 +213,44 @@ public class IntentRequest implements IRequest {
 
     @Override
     public void finish() {
-        ActivityCompat.finishAfterTransition(mActivity);
-        String enterKey = getEnterAnimKey();
-        String exitKey = getExitAnimKey();
-        if (mOptions.containsKey(enterKey) || mOptions.containsKey(exitKey)) {
-            mActivity.overridePendingTransition(mOptions.getInt(enterKey, 0), mOptions.getInt(exitKey, 0));
+        if (mShareViewList != null && mShareViewList.size() > 0) {
+            // 1.有共享元素
+            ActivityCompat.setEnterSharedElementCallback(mActivity, new SharedElementCallback() {
+                @Override
+                public void onMapSharedElements(List<String> names, Map<String, View> sharedElements) {
+                    names.clear();
+                    sharedElements.clear();
+                    // 重新设置共享元素信息
+                    for (Pair<View, String> pair : mShareViewList) {
+                        names.add(pair.second);
+                        sharedElements.put(pair.second, pair.first);
+                    }
+                }
+            });
+            mIntent.putExtra(PIntent.KEY_TRANSITION, true);
+            Bundle options = getOptions();
+            if (options != null) {
+                mIntent.putExtras(options);
+            }
+            mActivity.setResult(Activity.RESULT_OK, mIntent);
+            ActivityCompat.finishAfterTransition(mActivity);
+        } else if (mCustomOptions != null) {
+            // 2.有过渡动画
+            String enterKey = getEnterAnimKey();
+            String exitKey = getExitAnimKey();
+            mActivity.finish();
+            if (mCustomOptions.containsKey(enterKey) || mCustomOptions.containsKey(exitKey)) {
+                mActivity.overridePendingTransition(mCustomOptions.getInt(enterKey, 0), mCustomOptions.getInt(exitKey, 0));
+            }
         } else if (mConfig != null && mConfig.closeAnimOptions != null) {
-            mActivity.overridePendingTransition(mConfig.closeAnimOptions.getInt(enterKey, 0), mConfig.closeAnimOptions.getInt(exitKey, 0));
+            // 3.有默认过渡动画
+            int enterAnim = mConfig.closeAnimOptions.getInt(getEnterAnimKey(), 0);
+            int exitAnim = mConfig.closeAnimOptions.getInt(getExitAnimKey(), 0);
+            mActivity.finish();
+            mActivity.overridePendingTransition(enterAnim, exitAnim);
+        } else {
+            // 4.默认关闭
+            mActivity.finish();
         }
     }
 
