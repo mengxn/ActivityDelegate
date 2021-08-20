@@ -21,6 +21,7 @@ dependencies {
     implementation 'com.github.mengxn:ActivityDelegate:1.0.4'
 }
 ``` 
+[![](https://jitpack.io/v/mengxn/ActivityDelegate.svg)](https://jitpack.io/#mengxn/ActivityDelegate)
 
 ## Example
 
