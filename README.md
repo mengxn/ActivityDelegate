@@ -41,6 +41,19 @@ PIntent.from(this)
         .to(SecondActivity.class);
 ```
 
+例：打开 Activity，并处理回调数据
+```java
+PIntent.from(this)
+        .to(SecondActivity.class, REQUEST_OPEN_SECOND)
+        .result(new IRequest.Callback() {
+            @Override
+            public void onResult(Intent data) {
+                // do something when activity callback
+                Toast.makeText(MainActivity.this, data.getStringExtra("text"), Toast.LENGTH_SHORT).show();
+            }
+        });
+```
+
 例：打开一个有动画切换效果的Activity
 ```java
 PIntent.from(this)
@@ -55,23 +68,11 @@ PIntent.from(this)
         .with("key", "open with share view")
         .share(view, "share")
         .to(SecondActivity.class);
-```
-```java
+
 // 在新界面执行共享元素动画，在 setContentView 之前设置
 PIntent.postStartTransition(this, this);
 setContentView(layoutId);
+
 ```
 
-例：打开 Activity，并处理回调数据
-```java
-PIntent.from(this)
-        .to(SecondActivity.class, REQUEST_OPEN_SECOND)
-        .result(new IRequest.Callback() {
-            @Override
-            public void onResult(Intent data) {
-                // do something when activity callback
-                Toast.makeText(MainActivity.this, data.getStringExtra("text"), Toast.LENGTH_SHORT).show();
-            }
-        });
-```
 打开[Demo](app/src/main/java/me/codego/activitydelegate/MainActivity.java)查看更多实用方法
