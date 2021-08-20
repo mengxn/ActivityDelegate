@@ -1,9 +1,7 @@
 package me.codego.activitydelegate;
 
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +18,6 @@ public class SecondActivity extends AppCompatActivity implements IShareViewSelec
 
     private ImageView mIconIv;
     private Button mCloseBtn;
-    boolean isReturn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +69,9 @@ public class SecondActivity extends AppCompatActivity implements IShareViewSelec
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                PIntent.from(this).finish();
+                PIntent.from(this)
+                        .share(mCloseBtn, "button")
+                        .finish();
                 break;
             default:
                 break;
@@ -81,14 +80,9 @@ public class SecondActivity extends AppCompatActivity implements IShareViewSelec
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                ActivityCompat.finishAfterTransition(this);
-                return true;
-            default:
-                break;
-        }
-        return super.onKeyDown(keyCode, event);
+    public void onBackPressed() {
+        PIntent.from(this)
+                .share(mCloseBtn, "button")
+                .finish();
     }
 }
