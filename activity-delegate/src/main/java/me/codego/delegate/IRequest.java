@@ -125,7 +125,9 @@ public interface IRequest {
     interface BiCallback extends Callback {
         /**
          * 取消回调
+         *
+         * @param resultCode 结果码
          */
-        void onCancel();
+        void onCancel(int resultCode);
     }
 }
