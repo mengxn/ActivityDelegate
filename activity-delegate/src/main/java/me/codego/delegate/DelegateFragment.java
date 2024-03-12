@@ -40,7 +40,7 @@ public class DelegateFragment extends Fragment {
                 mCallback.onResult(data);
             } else {
                 if (mCallback instanceof IRequest.BiCallback) {
-                    ((IRequest.BiCallback) mCallback).onCancel();
+                    ((IRequest.BiCallback) mCallback).onCancel(resultCode);
                 }
             }
         }
