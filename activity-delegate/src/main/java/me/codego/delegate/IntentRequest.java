@@ -54,6 +54,12 @@ public class IntentRequest implements IRequest {
     }
 
     private DelegateFragment getDelegateFragment(FragmentActivity activity) {
+        if (activity == null
+                || activity.isFinishing()
+                || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && activity.isDestroyed())) {
+            // Activity 不可用，直接返回 null
+            return null;
+        }
         DelegateFragment fragment = findDelegateFragment(activity);
         if (fragment == null) {
             fragment = new DelegateFragment();
@@ -158,6 +164,9 @@ public class IntentRequest implements IRequest {
     }
 
     private void to(Intent intent, int requestCode, Bundle options) {
+        if (mDelegateFragment == null || !mDelegateFragment.isAdded()) {
+            return;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             if (requestCode == -1) {
                 mDelegateFragment.startActivity(intent, options);
